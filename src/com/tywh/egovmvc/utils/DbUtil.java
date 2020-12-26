@@ -1,9 +1,6 @@
 package com.tywh.egovmvc.utils;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class DbUtil {
 
@@ -14,23 +11,36 @@ public class DbUtil {
         Connection conn = threadLocal.get();
         if (conn == null) {
             Class.forName("com.mysql.jdbc.Driver");
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/egov-mvc","root","root123");
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/egov_mvc","root","root123");
             threadLocal.set(conn);
         }
 
         return conn;
     }
 
-    public static void close(Connection conn, Statement statement, ResultSet rs) {
+    public static void close(Connection conn, Statement st, ResultSet rs) {
         if (rs != null) {
             try {
                 rs.close();
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-
             }
+        }
 
+        if (st != null) {
+            try {
+                st.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+
+        if (conn != null) {
+            try {
+                conn.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
         }
     }
 }
